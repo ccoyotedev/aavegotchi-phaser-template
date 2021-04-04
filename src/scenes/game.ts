@@ -1,3 +1,5 @@
+import '../helpers/ethers';
+
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
   visible: false,
@@ -5,7 +7,9 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export default class GameScene extends Phaser.Scene {
+  public address: string;
   private square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
+  private loginText: Phaser.GameObjects.Text;
  
   constructor() {
     super(sceneConfig);
@@ -14,9 +18,21 @@ export default class GameScene extends Phaser.Scene {
   public create() {
     this.square = this.add.rectangle(300, 300, 100, 100, 0xFFFFFF) as any;
     this.physics.add.existing(this.square);
+
+    this.loginText =
+      this.add
+        .text(16, 16, `Loading...`)
+        .setFontSize(18)
+        .setFontFamily('Trebuchet MS')
+        .setColor('#00ffff')
   }
  
   public update() {
+    if (!this.address && window.ethereum.selectedAddress) {
+      this.address = window.ethereum.selectedAddress;
+      this.loginText.text = `Logged in as: ${this.address}`;
+    }
+  
     const cursorKeys = this.input.keyboard.createCursorKeys();
  
     if (cursorKeys.up.isDown) {
