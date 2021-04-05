@@ -16,6 +16,9 @@ export default class GameScene extends Phaser.Scene {
   public characterSelect: Phaser.GameObjects.Text[];
   public gotchis: Gotchi[];
   public selectedGotchiSprite: string;
+
+  private spriteLoaded: boolean;
+  private spriteRendered: boolean;
  
   constructor() {
     super(sceneConfig);
@@ -25,9 +28,8 @@ export default class GameScene extends Phaser.Scene {
     const blob = new Blob([svg], { type: "image/svg+xml" });
     const url = URL.createObjectURL(blob);
     console.log(url);
-    this.load.svg('gotchiSprite', url);
-
-    this.add.image(500, 500, 'gotchiSprite').setScale(5, 5);
+    this.load.image('gotchiSprite', url);
+    this.spriteLoaded = true;
   }
  
   public create() {
@@ -66,6 +68,9 @@ export default class GameScene extends Phaser.Scene {
         .on('pointerdown', function async () {
           const ether = new Ethers();
           ether.getAavegotchiSVG(gotchi.id).then((res) => self.handleRenderGotchi(res));
+          setTimeout(() => {
+            self.add.image(500, 500, 'gotchiSprite').setScale(5, 5);
+          }, 5000)
         })
       ))
     }
